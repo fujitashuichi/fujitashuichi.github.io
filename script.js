@@ -11,6 +11,16 @@ const turnBtnLeft = document.getElementById("turn-btn-left");
 const turnBtnRight = document.getElementById("turn-btn-right");
 const turnButtons = [turnBtnLeft, turnBtnRight];
 
+//const audios = {
+//    timeUp: null,
+//    byoYomi10: Audio(""),
+//    byoYomi20: Audio(""),
+//    byoYomi30: Audio(""),
+//    byoYomi60: Audio(""),
+//    byoYomi120: Audio("")
+//};
+
+
 let leftPlayer = {
     timer: 0,
     isByoYomi: false
@@ -55,6 +65,10 @@ function setClock(){
         // 時間を設定 (持ち時間を代入)
         leftPlayer.timer = timerSettings.basicTime;
         rightPlayer.timer = timerSettings.basicTime;
+
+        // 手番ボタンを押せるようにする
+        turnBtnLeft.disabled = false;
+        turnBtnRight.disabled = false;
 
         // 時計稼働中にセットボタンを押せないようにする (バグ回避)
         submitBtn.disabled = true;
