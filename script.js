@@ -9,17 +9,23 @@ const closeBtnTimeUpDialog = document.getElementById("close-btn-time-up-dialog")
 
 const turnBtnLeft = document.getElementById("turn-btn-left");
 const turnBtnRight = document.getElementById("turn-btn-right");
+const turnButtons = [turnBtnLeft, turnBtnRight];
 
 let leftPlayer = {
-    timer: 0
+    timer: 0,
+    isByoYomi: false
 }
 
 let rightPlayer = {
-    timer: 0
+    timer: 0,
+    isByoYomi: false
 }
 
+let players = [leftPlayer, rightPlayer];
+
 let timerSettings = {
-    basicTime: 0
+    basicTime: 0,
+    byoYomi: 0
 }
 
 let currentPlayer;
@@ -58,7 +64,7 @@ function setClock(){
 
 
 // 手番ボタン がクリックされた時の処理
-[turnBtnLeft, turnBtnRight].forEach(button => {
+turnButtons.forEach(button => {
     button.addEventListener("click", (event) => {
         // まだカウントしていないとき (手番がどちらでもないとき)
         if (!currentPlayer) {
@@ -84,19 +90,19 @@ function startGame(event) {
 }
 
 
-function updateClock(){
+function updateClock() {
     if (currentPlayer === "left") {
-        leftPlayer.timer--
-        updateDisplay();
+        if (leftPlayer.timer === 0 || leftPlayer.isByoYomi === true) {
+            runByoYomi();
+        } else {
+            decrementTimer();
+        }
     } else if (currentPlayer === "right") {
-        rightPlayer.timer--
-        updateDisplay();
-    } else {
-        alert("something went wrong in function updateTimer() .\n JavaScript: value of currentPlayer is right?");
-    };
-
-    if (leftPlayer.timer <= 0 || rightPlayer.timer <= 0) {
-        timeUpDialog.show();
+        if (rightPlayer.timer === 0 || rightPlayer.isByoYomi === true) {
+            runByoYomi();
+        } else {
+            decrementTimer();
+        }
     }
 }
 
@@ -108,6 +114,15 @@ function updateDisplay(){
 
 
 function switchPlayer() {
+    // 秒読み中は、着手後タイマーが戻る
+    if (currentPlayer == "left" && leftPlayer.isByoYomi === true) {
+        leftPlayer.timer = timerSettings.byoYomi;
+        updateDisplay();
+    } else if (currentPlayer === "right" && rightPlayer.isByoYomi === true) {
+        rightPlayer.timer = timerSettings.byoYomi;
+        updateDisplay();
+    };
+
     currentPlayer = currentPlayer === "left" ? "right" : "left";
     toggleTurnButtons();
 }
@@ -115,11 +130,40 @@ function switchPlayer() {
 
 // 手番ボタンをトグルする関数
 function toggleTurnButtons() {
-    [turnBtnLeft, turnBtnRight].forEach(button => {
+    turnButtons.forEach(button => {
         button.disabled = button.disabled === true ? false : true;
         button.style.background = getComputedStyle(button).backgroundColor === "rgb(255, 0, 0)" ? "#777" : "#ff0000";
     });
 };
+
+
+// 秒読み中の処理を管理する関数 (インターバル実行される)
+function runByoYomi() {
+    let player = currentPlayer === "left" ? leftPlayer : rightPlayer;
+
+    // 秒読みを始める時にフラグを立てて時間を代入する
+    if (player.isByoYomi === false) {
+        player.isByoYomi = true;
+        player.timer = timerSettings.byoYomi;
+    };
+
+    decrementTimer();
+
+    // 時間切れ処理
+    if (player.isByoYomi === true && player.timer === 0) {
+        pauseClock();
+        timeUpDialog.show();
+    };
+}
+
+
+function pauseClock() {
+    clearInterval(timerInterval);
+    turnButtons.forEach(button => {
+        button.disabled = true;
+        button.style.background = "#ccc";
+    });
+}
 
 
 function resetClock() {
@@ -131,7 +175,7 @@ function resetClock() {
     document.getElementById("right-player-timer").textContent = "00:00";
 
     // 手番ボタンをリセット
-    [turnBtnLeft, turnBtnRight].forEach(button => {
+    turnButtons.forEach(button => {
         button.style.backgroundColor = "#ccc";
         button.disabled = false;
     });
@@ -143,6 +187,19 @@ function resetClock() {
 
     currentPlayer = null;
     clearInterval(timerInterval);
+}
+
+
+function decrementTimer() {
+    if (currentPlayer === "left") {
+        leftPlayer.timer--
+        updateDisplay();
+    } else if (currentPlayer === "right") {
+        rightPlayer.timer--
+        updateDisplay();
+    } else {
+        alert("something went wrong in function updateTimer() .\n JavaScript: value of currentPlayer is right?");
+    };
 }
 
 
@@ -182,5 +239,10 @@ function timeInText(time) {
     let hours = Math.floor(time / 3600); // 時間を計算
     let minutes = Math.floor((time %3600) / 60); // 分を計算
     let seconds = time % 60;
-    return `${hours}:${minutes}:${seconds}`;
+
+    if (hours >= 1) {
+        return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    } else {
+        return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    };
 }
