@@ -12,12 +12,12 @@ const turnBtnRight = document.getElementById("turn-btn-right");
 const turnButtons = [turnBtnLeft, turnBtnRight];
 
 const audios = {
-//    timeUp: null,
-    byoYomi10: Audio("./audio/num010-000_02_01.wav"),
-//    byoYomi20: Audio(""),
-    byoYomi30: Audio("./audio/jihou_30byou_01.wav"),
-//    byoYomi60: Audio(""),
-//    byoYomi120: Audio("")
+//    timeUp: new Audio(""),
+    byoYomi10: new Audio("./audio/num010-000_02_01.wav"),
+//    byoYomi20: new Audio(""),
+    byoYomi30: new Audio("./audio/jihou_30byou_01.wav"),
+//    byoYomi60: new Audio(""),
+//    byoYomi120: new Audio("")
 };
 
 
@@ -212,6 +212,10 @@ function decrementTimer() {
             break;
 
         case 60:
+            break;
+
+        case 120:
+            break;
 
         default:
             break;
