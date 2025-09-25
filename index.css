@@ -49,9 +49,10 @@ input {
 
 .form{
     display: flex;
+    margin-bottom: 50px;
 }
 
-.byo-yomi-group{
+.section-byo-yomi {
     display: flex;
     width: fit-content;
     margin: 0 0 0 auto;
@@ -84,13 +85,14 @@ input {
 .turn-btn-group{
     display: flex;
     width: 600px;
-    padding: 0;
+    padding: 0 75px;
     margin: 0 auto;
-    margin-top: 75px;
     margin-bottom: 0;
+    align-items: flex-start;
 }
 
-.turn-btn{
+.turn-btn {
+    position: relative;
     border: none;
     border-radius: 10px;
     width: 90px;
@@ -98,27 +100,45 @@ input {
     background: #777;
     cursor: pointer;
     transition: 0.25s;
+    z-index: 0;
 }
 
 .turn-btn:hover{
     background-color: yellowgreen;
 }
 
+.turn-btn::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 20px;
+    background: #333;
+    z-index: -1;
+}
+
+.turn-btn:disabled {
+    transform: translateY(10px);
+}
+
 .turn-btn-left{
-    margin-left: 75px;
+    margin: 0;
 }
 
 .turn-btn-right{
     margin: 0 0 0 auto;
-    margin-right: 75px;
 }
 
 .clock-body{
+    position: relative;
     background-color: #000000;
     margin: 0 auto;
     height: 360px;
     width: 600px;
     border-radius: 20px;
+    z-index: 0;
 }
 
 .timer-display{
@@ -138,7 +158,7 @@ input {
     font-family: "Micro 5", sans-serif;
 }
 
-.info-window{
+.info {
     background-color: #666;
     height: 60px;
     width: 150px;

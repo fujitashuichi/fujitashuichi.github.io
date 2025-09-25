@@ -22,13 +22,11 @@ const audios = {
 
 
 let leftPlayer = {
-    id: "left",
     timer: 0,
     isByoYomi: false
 }
 
 let rightPlayer = {
-    id: "right",
     timer: 0,
     isByoYomi: false
 }
@@ -50,8 +48,6 @@ submitBtn.addEventListener("click", (event) => {
 
     // form に入力された持ち時間の設定を読み取る
     loadTimerSettings();
-    // 入力値の検証
-    checkInputTimes();
 
     if (checkInputTimes()) {
         // 持ち時間の設定が正しい場合、タイマーをセット
@@ -69,8 +65,10 @@ function setClock(){
         rightPlayer.timer = timerSettings.basicTime;
 
         // 手番ボタンを押せるようにする
-        turnBtnLeft.disabled = false;
-        turnBtnRight.disabled = false;
+        turnButtons.forEach(button => {
+            button.disabled = false;
+            button.style.translate = "0 -10px";
+        });
 
         // 時計稼働中にセットボタンを押せないようにする (バグ回避)
         submitBtn.disabled = true;
@@ -144,8 +142,6 @@ function toggleTurnButtons() {
 
 // 秒読み中の処理を管理する関数 (インターバル実行される)
 function runByoYomi() {
-    let currentPlayer;
-
     // 秒読みを始める時にフラグを立てて時間を代入する
     if (currentPlayer.isByoYomi === false) {
         currentPlayer.isByoYomi = true;
