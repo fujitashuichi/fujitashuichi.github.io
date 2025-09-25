@@ -1,5 +1,5 @@
 // 各種要素を取得
-const submitBtn = document.getElementById("submit-btn");
+const setClockBtn = document.getElementById("set-clock-btn");
 
 const timeUpDialog = document.getElementById("time-up-dialog");
 const inputCheckDialog = document.getElementById("input-check-dialog");
@@ -43,7 +43,7 @@ let timerInterval;
 
 
 // セットボタン クリック時の処理
-submitBtn.addEventListener("click", (event) => {
+setClockBtn.addEventListener("click", (event) => {
     event.preventDefault();
 
     // form に入力された持ち時間の設定を読み取る
@@ -71,7 +71,7 @@ function setClock(){
         });
 
         // 時計稼働中にセットボタンを押せないようにする (バグ回避)
-        submitBtn.disabled = true;
+        setClockBtn.disabled = true;
 
         updateDisplay();
 }

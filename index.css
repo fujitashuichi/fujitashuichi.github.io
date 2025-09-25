@@ -29,11 +29,6 @@ input {
     text-align: right;
 }
 
-.unit{
-    font-size: 20px;
-    margin: auto;
-}
-
 .site-title{
     text-align: center;
     color: #000000;
@@ -43,29 +38,39 @@ input {
 }
 
 .container{
-    width: 720px;
+    max-width: 720px;
     margin: 0 auto;
 }
 
 .form{
     display: flex;
+    flex-wrap: wrap;
     margin-bottom: 50px;
 }
 
-.section-byo-yomi {
+.form p {
+    font-size: 20px;
+    margin: auto;
+}
+
+.form .section-basic-time {
+    display: flex;
+}
+
+.form .section-byo-yomi {
     display: flex;
     width: fit-content;
     margin: 0 0 0 auto;
 }
 
-.input{
+.form .input{
     width: 60px;
     height: 30px;
     margin: auto 0;
     margin-left: 8px;
 }
 
-.submit-btn{
+#set-clock-btn{
     background-color: #7fd33a;
     border: none;
     border-radius: 10px;
@@ -78,7 +83,7 @@ input {
     transition: 0.25s;
 }
 
-.submit-btn:hover{
+#set-clock-btn:hover{
     background-color: red;
 }
 
@@ -101,10 +106,6 @@ input {
     cursor: pointer;
     transition: 0.25s;
     z-index: 0;
-}
-
-.turn-btn:hover{
-    background-color: yellowgreen;
 }
 
 .turn-btn::after {
@@ -133,12 +134,16 @@ input {
 
 .clock-body{
     position: relative;
-    background-color: #000000;
+    background-color: darkslategray;
     margin: 0 auto;
     height: 360px;
     width: 600px;
     border-radius: 20px;
     z-index: 0;
+}
+
+.section-display {
+    display: flex;
 }
 
 .timer-display{
@@ -150,6 +155,7 @@ input {
     height: 120px;
     width: 270px;
     border-radius: 5px;
+    border: inset 4px #0f0f0f;
 }
 
 .timer-string{
@@ -158,14 +164,30 @@ input {
     font-family: "Micro 5", sans-serif;
 }
 
-.info {
-    background-color: #666;
-    height: 60px;
-    width: 150px;
-    margin: 20px auto;
+.section-player-info {
+    display: flex;
+    width: 100%;
+    padding: 30px;
 }
 
-.dialog{
+.player-info {
+    background-color: #666;
+    width: 240px;
+    height: 100px;
+    border-radius: 10px;
+    border: inset 2px #0f0f0f;
+}
+
+.player-info-left {
+    margin: 0;
+}
+
+.player-info-right {
+    margin: 0 0 0 auto;
+}
+
+
+.dialog {
     width: 300px;
     height: 200px;
     background-color: #000000;
@@ -178,7 +200,7 @@ input {
     border-radius: 10px;
 }
 
-.dialog-texts{
+.dialog .text {
     width: 100%;
     height: 150px;
     padding-top: 10px;
@@ -187,26 +209,26 @@ input {
     border-radius: 5px;
 }
 
-.text-alert{
+.dialog-title {
     color: red;
     font-size: 30px;
     text-align: center;
     font-family: sans-serif;
 }
 
-.text-info{
+.dialog .text p {
     color: #000;
     text-align: center;
     font-size: 15px;
     font-family: sans-serif;
 }
 
-.dialog-btns{
+.dialog-btn {
     display: flex;
     margin-top: 2px;
 }
 
-.close-btn{
+.dialog-btn button {
     background-color: red;
     border: none;
     border-radius: 10px;
