@@ -11,22 +11,24 @@ const turnBtnLeft = document.getElementById("turn-btn-left");
 const turnBtnRight = document.getElementById("turn-btn-right");
 const turnButtons = [turnBtnLeft, turnBtnRight];
 
-//const audios = {
+const audios = {
 //    timeUp: null,
-//    byoYomi10: Audio(""),
+    byoYomi10: Audio("./audio/num010-000_02_01.wav"),
 //    byoYomi20: Audio(""),
-//    byoYomi30: Audio(""),
+    byoYomi30: Audio("./audio/jihou_30byou_01.wav"),
 //    byoYomi60: Audio(""),
 //    byoYomi120: Audio("")
-//};
+};
 
 
 let leftPlayer = {
+    id: "left",
     timer: 0,
     isByoYomi: false
 }
 
 let rightPlayer = {
+    id: "right",
     timer: 0,
     isByoYomi: false
 }
@@ -92,7 +94,7 @@ turnButtons.forEach(button => {
 
 
 function startGame(event) {
-    currentPlayer = event.target === turnBtnLeft ? "right" : "left";
+    currentPlayer = event.target === turnBtnLeft ? rightPlayer : leftPlayer;
     if (event.target === turnBtnLeft) {
         turnBtnRight.style.background = "#ff0000";
         turnBtnLeft.disabled = true;
@@ -105,19 +107,11 @@ function startGame(event) {
 
 
 function updateClock() {
-    if (currentPlayer === "left") {
-        if (leftPlayer.timer === 0 || leftPlayer.isByoYomi === true) {
-            runByoYomi();
-        } else {
-            decrementTimer();
-        }
-    } else if (currentPlayer === "right") {
-        if (rightPlayer.timer === 0 || rightPlayer.isByoYomi === true) {
-            runByoYomi();
-        } else {
-            decrementTimer();
-        }
-    }
+    if (currentPlayer.timer === 0 || currentPlayer.isByoYomi === true) {
+        runByoYomi();
+    } else {
+        decrementTimer();
+    };
 }
 
 
@@ -129,15 +123,12 @@ function updateDisplay(){
 
 function switchPlayer() {
     // 秒読み中は、着手後タイマーが戻る
-    if (currentPlayer == "left" && leftPlayer.isByoYomi === true) {
-        leftPlayer.timer = timerSettings.byoYomi;
-        updateDisplay();
-    } else if (currentPlayer === "right" && rightPlayer.isByoYomi === true) {
-        rightPlayer.timer = timerSettings.byoYomi;
+    if (currentPlayer.isByoYomi === true) {
+        currentPlayer.timer = timerSettings.byoYomi;
         updateDisplay();
     };
 
-    currentPlayer = currentPlayer === "left" ? "right" : "left";
+    currentPlayer = currentPlayer === leftPlayer ? rightPlayer : leftPlayer;
     toggleTurnButtons();
 }
 
@@ -153,18 +144,18 @@ function toggleTurnButtons() {
 
 // 秒読み中の処理を管理する関数 (インターバル実行される)
 function runByoYomi() {
-    let player = currentPlayer === "left" ? leftPlayer : rightPlayer;
+    let currentPlayer;
 
     // 秒読みを始める時にフラグを立てて時間を代入する
-    if (player.isByoYomi === false) {
-        player.isByoYomi = true;
-        player.timer = timerSettings.byoYomi;
+    if (currentPlayer.isByoYomi === false) {
+        currentPlayer.isByoYomi = true;
+        currentPlayer.timer = timerSettings.byoYomi;
     };
 
     decrementTimer();
 
     // 時間切れ処理
-    if (player.isByoYomi === true && player.timer === 0) {
+    if (currentPlayer.isByoYomi === true && currentPlayer.timer === 0) {
         pauseClock();
         timeUpDialog.show();
     };
@@ -205,15 +196,28 @@ function resetClock() {
 
 
 function decrementTimer() {
-    if (currentPlayer === "left") {
-        leftPlayer.timer--
-        updateDisplay();
-    } else if (currentPlayer === "right") {
-        rightPlayer.timer--
-        updateDisplay();
-    } else {
-        alert("something went wrong in function updateTimer() .\n JavaScript: value of currentPlayer is right?");
+    currentPlayer.timer--
+
+    // 残り秒数読み上げ
+    switch (currentPlayer.timer) {
+        case 0:
+            break;
+
+        case 10:
+            audios.byoYomi10.play();
+            break;
+
+        case 30:
+            audios.byoYomi30.play();
+            break;
+
+        case 60:
+
+        default:
+            break;
     };
+
+    updateDisplay();
 }
 
 
