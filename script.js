@@ -203,8 +203,6 @@ function resetClock() {
 
 
 function decrementTimer() {
-    currentPlayer.timer--
-
     // 残り秒数読み上げ
     switch (currentPlayer.timer) {
         case 0:
@@ -230,6 +228,7 @@ function decrementTimer() {
             break;
     };
 
+    currentPlayer.timer--
     updateDisplay();
 }
 
