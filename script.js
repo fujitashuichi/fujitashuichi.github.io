@@ -9,7 +9,7 @@ const closeBtnTimeUpDialog = document.getElementById("close-btn-time-up-dialog")
 
 const turnBtnLeft = document.getElementById("turn-btn-left");
 const turnBtnRight = document.getElementById("turn-btn-right");
-const turnButtons = [turnBtnLeft, turnBtnRight];
+const turnBtns = [turnBtnLeft, turnBtnRight];
 
 const audios = {
 //    timeUp: new Audio(""),
@@ -38,7 +38,8 @@ let timerSettings = {
     byoYomi: 0
 }
 
-let currentPlayer;
+let currentPlayer = null;
+let currentAudio = null;
 let timerInterval;
 
 
@@ -65,7 +66,7 @@ function setClock(){
         rightPlayer.timer = timerSettings.basicTime;
 
         // 手番ボタンを押せるようにする
-        turnButtons.forEach(button => {
+        turnBtns.forEach(button => {
             button.disabled = false;
             button.style.translate = "0 -10px";
         });
@@ -78,12 +79,19 @@ function setClock(){
 
 
 // 手番ボタン がクリックされた時の処理
-turnButtons.forEach(button => {
+turnBtns.forEach(button => {
     button.addEventListener("click", (event) => {
         // まだカウントしていないとき (手番がどちらでもないとき)
         if (!currentPlayer) {
             startGame(event);
-            return;
+            return; // switchPlayer() を回避して、手番が正しく設定されるようにしている
+        };
+
+        // 読み上げていれば、停止する
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            currentAudio = null;
         };
 
         switchPlayer();
@@ -92,14 +100,16 @@ turnButtons.forEach(button => {
 
 
 function startGame(event) {
-    currentPlayer = event.target === turnBtnLeft ? rightPlayer : leftPlayer;
     if (event.target === turnBtnLeft) {
+        currentPlayer = rightPlayer;
         turnBtnRight.style.background = "#ff0000";
         turnBtnLeft.disabled = true;
     } else {
+        currentPlayer = leftPlayer;
         turnBtnLeft.style.background = "#ff0000";
         turnBtnRight.disabled = true;
-    }
+    };
+
     timerInterval = setInterval(updateClock, 1000);
 }
 
@@ -121,19 +131,19 @@ function updateDisplay(){
 
 function switchPlayer() {
     // 秒読み中は、着手後タイマーが戻る
-    if (currentPlayer.isByoYomi === true) {
+    if (currentPlayer.isByoYomi) {
         currentPlayer.timer = timerSettings.byoYomi;
         updateDisplay();
     };
 
     currentPlayer = currentPlayer === leftPlayer ? rightPlayer : leftPlayer;
-    toggleTurnButtons();
+    toggleTurnBtns();
 }
 
 
 // 手番ボタンをトグルする関数
-function toggleTurnButtons() {
-    turnButtons.forEach(button => {
+function toggleTurnBtns() {
+    turnBtns.forEach(button => {
         button.disabled = button.disabled === true ? false : true;
         button.style.background = getComputedStyle(button).backgroundColor === "rgb(255, 0, 0)" ? "#777" : "#ff0000";
     });
@@ -160,7 +170,7 @@ function runByoYomi() {
 
 function pauseClock() {
     clearInterval(timerInterval);
-    turnButtons.forEach(button => {
+    turnBtns.forEach(button => {
         button.disabled = true;
         button.style.background = "#ccc";
     });
@@ -176,7 +186,7 @@ function resetClock() {
     document.getElementById("right-player-timer").textContent = "00:00";
 
     // 手番ボタンをリセット
-    turnButtons.forEach(button => {
+    turnBtns.forEach(button => {
         button.style.backgroundColor = "#ccc";
         button.disabled = false;
     });
@@ -200,11 +210,13 @@ function decrementTimer() {
             break;
 
         case 10:
-            audios.byoYomi10.play();
+            currentAudio = audios.byoYomi10;
+            currentAudio.play();
             break;
 
         case 30:
-            audios.byoYomi30.play();
+            currentAudio = audios.byoYomi30;
+            currentAudio.play();
             break;
 
         case 60:
