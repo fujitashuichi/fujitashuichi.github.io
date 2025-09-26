@@ -12,12 +12,11 @@ const turnBtnRight = document.getElementById("turn-btn-right");
 const turnBtns = [turnBtnLeft, turnBtnRight];
 
 const audios = {
-//    timeUp: new Audio(""),
-    byoYomi10: new Audio("./audio/num010-000_02_01.wav"),
-//    byoYomi20: new Audio(""),
-    byoYomi30: new Audio("./audio/jihou_30byou_01.wav"),
-//    byoYomi60: new Audio(""),
-//    byoYomi120: new Audio("")
+    30: new Audio("./audio/num30.wav"),
+    10: new Audio("./audio/num10.wav"),
+    9: new Audio("./audio/num9.wav"),
+    8: new Audio("./audio/num8.wav"),
+    7: new Audio("./audio/num7.wav"),
 };
 
 
@@ -204,32 +203,35 @@ function resetClock() {
 
 function decrementTimer() {
     // 残り秒数読み上げ
-    switch (currentPlayer.timer) {
-        case 0:
-            break;
-
-        case 10:
-            currentAudio = audios.byoYomi10;
-            currentAudio.play();
-            break;
-
-        case 30:
-            currentAudio = audios.byoYomi30;
-            currentAudio.play();
-            break;
-
-        case 60:
-            break;
-
-        case 120:
-            break;
-
-        default:
-            break;
+    let sec = currentPlayer.timer;
+    if ([30, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0].includes(sec)) {
+        playByoYomiAudio(sec);
     };
 
     currentPlayer.timer--
     updateDisplay();
+}
+
+
+function playByoYomiAudio(sec) {
+    const audioObj = audios[sec];
+    if (!audioObj) return;
+
+    // 再生中の音があれば停止
+    if (currentAudio) {
+        try {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+        } catch (e) { /* 例外なら何もしない */ }
+        currentAudio = null;
+    }
+
+    const src = audioObj.src;
+    if (!src) return;
+
+    // 新しくインスタンスを生成して、競合を防ぐ
+    currentAudio = new Audio(src);
+    currentAudio.play().catch(() => { /* 再生不可な場合は無視 */ });
 }
 
 
