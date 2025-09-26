@@ -17,7 +17,19 @@ const audios = {
     9: new Audio("./audio/num9.wav"),
     8: new Audio("./audio/num8.wav"),
     7: new Audio("./audio/num7.wav"),
+    6: new Audio("./audio/num6.wav"),
+    5: new Audio("./audio/num5.wav"),
+    4: new Audio("./audio/num4.wav"),
+    3: new Audio("./audio/num3.wav"),
+    2: new Audio("./audio/num2.wav"),
+    1: new Audio("./audio/num1.wav")
 };
+
+// 事前ロード
+Object.values(audios).forEach(audio => {
+    audio.preload = "auto";
+    try { audio.load(); } catch (e) { /* 無視 */ }
+})
 
 
 let leftPlayer = {
@@ -218,19 +230,12 @@ function playByoYomiAudio(sec) {
     if (!audioObj) return;
 
     // 再生中の音があれば停止
-    if (currentAudio) {
-        try {
-            currentAudio.pause();
-            currentAudio.currentTime = 0;
-        } catch (e) { /* 例外なら何もしない */ }
-        currentAudio = null;
-    }
+    try {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    } catch (e) { /* 例外なら何もしない */ }
 
-    const src = audioObj.src;
-    if (!src) return;
-
-    // 新しくインスタンスを生成して、競合を防ぐ
-    currentAudio = new Audio(src);
+    currentAudio = audioObj;
     currentAudio.play().catch(() => { /* 再生不可な場合は無視 */ });
 }
 
