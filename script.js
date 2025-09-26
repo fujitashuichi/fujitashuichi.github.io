@@ -158,13 +158,14 @@ function runByoYomi() {
         currentPlayer.timer = timerSettings.byoYomi;
     };
 
-    decrementTimer();
-
     // 時間切れ処理
     if (currentPlayer.isByoYomi === true && currentPlayer.timer === 0) {
         pauseClock();
         timeUpDialog.show();
+        return;
     };
+
+    decrementTimer();
 }
 
 
